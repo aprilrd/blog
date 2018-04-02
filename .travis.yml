@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+- 8.9.1
+os:
+- linux
+sudo: false
+install:
+  - npm install
+script:
+  - npm run build
+deploy:
+  provider: s3
+  access_key_id: AKIAJNXTUHKWZOAFGUKA
+  secret_access_key:
+    secure: TU7j9YwOEvzYA/EqVmNXIK9ryIOheOnuPxSaPmL+S4UPRDeJt8TgkqQqW4yrRO7C9tTdAsNr+PbH0jB5WGz+kWeSmy++y66dpfPOlSkzC6zGPiq/lfWOfvM2RUk0/cHUDrFzUJjsOG2ms2JQ+NQJCAdHjWSptcgDxCbWSp/C8qWe1aZwGDfgQ1W54sgq9p8JDIR/T1OBXeCnm7AD1fVVmzMUWyykgSBfMKo3v3YJww9UU94aCsZC+OV56CO3AW94wgFAgB6aKdKAjCELu4uud/+C6eIOce+yYfBFcQASAuZSDJA1Ck2z8khgSwzDgF0I9rIjsIf3sPHR531dHwrhFOY6w3oOq6z/nvjYu6oBC2N+T69Spb261d4Pp65EoxwkMlVr8BPv6/FiOuWB+3VPch9ZU5NQJotVxnH0nvbQnM2boI22G05eZKHNR7RurWm1TI9y+qo64HuJMxe6yLgjmnD6/8V9he2xu6VjdDpcYgnic8I6kHzCnHb4GWFvgcsLK5MjgpLUczCkeKKuAv+4BxxvJS1b/y5HldD0LE8+ySNa/OQ/3m6x3tFpqXpVQTB0k4Vci63b2a+cZszxCVuLwV10SFUS+QcSpLWlwcyxMqG2VMxE2BHEXVq2YNJV3LmXOWz6t2PYvd72bbMwFs/xAaTuwWQ1GMU3xm7N6qk/VrY=
+  bucket: youngk.im
+  skip_cleanup: true
+  local_dir: public
+after_script:
+- npm run codeclimate
