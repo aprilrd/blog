@@ -2,7 +2,7 @@ import path from "path";
 import React from "react";
 import Helmet from "react-helmet";
 import PropTypes from "prop-types";
-import config from "../config";
+import * as config from "../config";
 
 const getSchemaOrgJSONLD = ({
   isBlogPost,
@@ -72,13 +72,15 @@ const getSchemaOrgJSONLD = ({
     : schemaOrgJSONLD;
 };
 
-const SEO = ({ postData, postImage, isBlogPost }) => {
+const SEO = ({ postData, isBlogPost }) => {
   const postMeta = postData.frontmatter || {};
 
   const title = postMeta.title || config.blogTitle;
   // TODO: const description =
   //   postMeta.description || postData.excerpt || config.description;
+  const description = undefined;
   // TODO: const image = `${config.url}${postImage}` || config.image;
+  const image = undefined;
   const url = postMeta.slug
     ? `${config.url}${path.sep}${postMeta.slug}`
     : config.url;
@@ -128,7 +130,6 @@ SEO.propTypes = {
     frontmatter: PropTypes.any,
     excerpt: PropTypes.any,
   }).isRequired,
-  postImage: PropTypes.string,
 };
 
 SEO.defaultProps = {
