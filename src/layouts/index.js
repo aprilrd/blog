@@ -16,7 +16,6 @@ const TemplateWrapper = ({ children, location }) => {
         <meta name="og:type" content="website" />
         <meta name="og:site_name" content={config.blogTitle} />
         <link rel="canonical" href={`${config.url}${location.pathname}`} />
-        <html lang="en" />
       </Helmet>
       <Header />
       <div
