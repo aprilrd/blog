@@ -4,7 +4,6 @@ import Helmet from "react-helmet";
 
 import * as config from "../config";
 import Header from "../components/Header";
-import "./index.css";
 
 const TemplateWrapper = ({ children, location }) => {
   return (
@@ -21,9 +20,8 @@ const TemplateWrapper = ({ children, location }) => {
       <div
         style={{
           margin: "0 auto",
-          maxWidth: 960,
-          padding: "0px 1.0875rem 1.45rem",
-          paddingTop: 0,
+          maxWidth: "42rem",
+          padding: "1.5rem 1.125rem",
         }}
       >
         {children()}

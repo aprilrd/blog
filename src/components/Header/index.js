@@ -1,31 +1,28 @@
 import React from "react";
 import Link from "gatsby-link";
 
+import * as config from "../../config";
+
 const Header = () => (
-  <div
-    style={{
-      background: "rebeccapurple",
-      marginBottom: "1.45rem",
-    }}
-  >
+  <div>
     <div
       style={{
         margin: "0 auto",
-        maxWidth: 960,
-        padding: "1.45rem 1.0875rem",
+        maxWidth: "42rem",
+        padding: "1.5rem 1.125rem",
       }}
     >
       <h1 style={{ margin: 0 }}>
         <Link
           to="/"
           style={{
-            color: "white",
             textDecoration: "none",
           }}
         >
-          Gatsby
+          {config.blogTitle}
         </Link>
       </h1>
+      <div>On Humans, Javascript, and Tech</div>
     </div>
   </div>
 );
