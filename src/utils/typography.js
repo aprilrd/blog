@@ -1,9 +1,21 @@
 import Typography from "typography";
 import deYoungTheme from "typography-theme-de-young";
-deYoungTheme.baseFontSize = "17.5px";
-deYoungTheme.headerFontFamily = ["Merriweather", "Georgia"];
-deYoungTheme.bodyFontFamily = ["Merriweather", "Georgia"];
-const typography = new Typography(deYoungTheme);
+
+const theme = {
+  ...deYoungTheme,
+  baseFontSize: "17.5px",
+  headerFontFamily: ["Merriweather", "Georgia"],
+  bodyFontFamily: ["Merriweather", "Georgia"],
+  includeNormalize: true,
+  googleFonts: [
+    {
+      name: "Merriweather",
+      styles: ["400", "400i", "500", "500i", "700", "700i"],
+    },
+  ],
+};
+
+const typography = new Typography(theme);
 
 if (process.env.NODE_ENV !== "production") {
   typography.injectStyles();
