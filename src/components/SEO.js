@@ -84,7 +84,7 @@ const SEO = ({ postData, isBlogPost }) => {
   const url = postMeta.slug
     ? `${config.url}${path.sep}${postMeta.slug}`
     : config.url;
-  const datePublished = isBlogPost ? postMeta.datePublished : false;
+  const datePublished = isBlogPost ? postMeta.createdAt : false;
 
   const schemaOrgJSONLD = getSchemaOrgJSONLD({
     isBlogPost,

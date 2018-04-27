@@ -1,8 +1,8 @@
 {
-  "name": "gatsby-starter-default",
-  "description": "Gatsby default starter",
+  "name": "young-kim-blog",
+  "description": "Young Kim's Blog",
   "version": "1.0.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "author": "Young Kim",
   "dependencies": {
     "gatsby": "^1.9.252",
     "gatsby-link": "^1.6.40",
@@ -15,9 +15,7 @@
     "typography": "^0.16.16",
     "typography-theme-de-young": "^0.16.9"
   },
-  "keywords": [
-    "gatsby"
-  ],
+  "keywords": ["gatsby"],
   "license": "MIT",
   "scripts": {
     "build": "gatsby build",

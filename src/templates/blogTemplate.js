@@ -12,7 +12,7 @@ export default function Template({
       <SEO isBlogPost postData={frontmatter} />
       <div className="blog-post">
         <h1>{frontmatter.title}</h1>
-        <h2>{frontmatter.date}</h2>
+        <h2>{frontmatter.createdAt}</h2>
         <div
           className="blog-post-content"
           dangerouslySetInnerHTML={{ __html: html }}
@@ -27,7 +27,7 @@ export const pageQuery = graphql`
     markdownRemark(frontmatter: { path: { eq: $path } }) {
       html
       frontmatter {
-        date(formatString: "MMMM DD, YYYY")
+        createdAt(formatString: "MMMM DD, YYYY")
         path
         title
       }

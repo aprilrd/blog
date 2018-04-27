@@ -17,7 +17,7 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
   return graphql(`
     {
       allMarkdownRemark(
-        sort: { order: DESC, fields: [frontmatter___date] }
+        sort: { order: DESC, fields: [frontmatter___createdAt] }
         limit: 2000
       ) {
         edges {
@@ -25,6 +25,7 @@ exports.createPages = ({ boundActionCreators, graphql }) => {
             frontmatter {
               path
               tags
+              createdAt
             }
           }
         }
