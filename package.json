@@ -6,6 +6,7 @@
   "dependencies": {
     "gatsby": "^1.9.252",
     "gatsby-link": "^1.6.40",
+    "gatsby-plugin-google-analytics": "^1.0.31",
     "gatsby-plugin-react-helmet": "^2.0.10",
     "gatsby-plugin-typography": "^1.7.18",
     "gatsby-source-filesystem": "^1.5.33",
@@ -15,7 +16,9 @@
     "typography": "^0.16.16",
     "typography-theme-de-young": "^0.16.9"
   },
-  "keywords": ["gatsby"],
+  "keywords": [
+    "gatsby"
+  ],
   "license": "MIT",
   "scripts": {
     "build": "gatsby build",
