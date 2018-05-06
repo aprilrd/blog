@@ -15,6 +15,10 @@ const TemplateWrapper = ({ children, location }) => {
       >
         <meta name="og:type" content="website" />
         <meta name="og:site_name" content={config.blogTitle} />
+        <meta
+          name="google-site-verification"
+          content="yhN3kUxRqwJLfzIfMTpAvB2avF8NGeCIT86wjtL5Lkk"
+        />
         <link rel="canonical" href={`${config.url}${location.pathname}`} />
       </Helmet>
       <Header />
