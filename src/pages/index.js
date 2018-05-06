@@ -23,9 +23,10 @@ export const pageQuery = graphql`
       edges {
         node {
           id
-          excerpt(pruneLength: 250)
+          excerpt(pruneLength: 100)
           frontmatter {
             createdAt(formatString: "MMMM DD, YYYY")
+            tags
             path
             title
           }
