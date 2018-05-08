@@ -5,6 +5,8 @@ createdAt: "2018-05-08"
 tags: ["react", "redux", "typescript"]
 ---
 
+_This post is a repost of [my post at Vingle Tech Blog](https://medium.com/vingle-tech-blog/part-1-history-of-redux-state-management-at-vingle-565cdcf13df1)._
+
 In this two-part post, I am going to go over the different flavors of Redux state management at [Vingle](https://www.vingle.net) and our thought process behind each iterations we went through over the last year and half. I hope this post guide how you structure your Redux states.
 
 ### Genesis: Redux + Immutable.Map
