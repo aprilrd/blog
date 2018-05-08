@@ -63,30 +63,109 @@ interface Map<K, V> extends Keyed<K, V> { ... }
 As you can see, there isn't a good way to specify different types of a Immutable.Map's values. So we ended up doing this hacky workaround.
 
 ```typescript
-interface IToastImmutable {
-  get(key: "type"): ToastTypes;
-  get(key: "message"): string;
+// scaffolding
+interface IPostStateImmutable {
+  get(key: "post"): IPostImmutable | null;
+  get(key: "isLoading"): boolean;
 
-  set(key: "type", value: ToastTypes): IToastImmutable;
-  set(key: "message", value: string): IToastImmutable;
+  set(key: "post", value: IPostImmutable | null): IPostStateImmutable;
+  set(key: "isLoading", value: boolean): IPostStateImmutable;
   withMutations(
-    mutator: (mutable: IToastImmutable) => IToastImmutable,
-  ): IToastImmutable;
+    mutator: (mutable: IPostStateImmutable) => IPostStateImmutable,
+  ): IPostStateImmutable;
 }
 
-// actual usage
-const toast: IToastImmutable = Immutable.Map({
-  type: "warning",
-  message: "Warning!",
+// reducers
+const INITIAL_STATE: IPostStateImmutable = Map({
+  post: null,
+  isLoading: false,
 });
+
+function postReducer(
+  state: IPostStateImmutable = INITIAL_STATE,
+  action,
+): IPostStateImmutable {
+  switch (action.type) {
+    case "FETCHED": {
+      return state.withMutations(currentState =>
+        currentState.set("post", action.payload.post).set("isLoading", false),
+      );
+    }
+    case "UPDATE_TITLE": {
+      return state.setIn(["post", "title"], action.payload.title);
+    }
+    default: {
+      return state;
+    }
+  }
+}
+
+// actions stay the same
 ```
 
-Needless to say, this style was painful to maintain, and hard to guarantee correctness. Typescript got in the way rather than helping us.
+Needless to say, this style was painful to maintain, and hard to guarantee correctness. Typescript got in the way more than helping us.
 
 ### 2nd Iteration: Typescript + Redux + Immutable.Record
 
-So we looked for different
+So we looked for a better way to tie Typescript and Immutable.js together. Then we found that there was another Immutable class called `Immutable.Record` and a library called `typed-immutable-record`. With the library, we could create a type-safe Immutable Record:
+
+```typescript
+import { TypedRecord, recordify } from "typed-immutable-record";
+
+// scaffolding
+interface IPostState {
+  post: IPost;
+  isLoading: boolean;
+}
+
+interface IPostStateRecordPart {
+  post: IPostRecord;
+  isLoading: boolean;
+}
+
+interface IPostStateRecord
+  extends TypedRecord<IPostStateRecordPart>,
+    IPostStateRecord {}
+
+function recordifyPostState(plainState: IPostState): IPostStateRecord {
+  return recordify<IPostStateRecordPart, IPostStateRecord>({
+    post: plainState.post
+      ? recordify<IPostRecordPart, IPostRecord>(plainState.post)
+      : null,
+    isLoading: plainState.isLoading,
+  });
+}
+
+// reducers
+const INITIAL_STATE: IPostStateRecord = recordifyPostState({
+  post: null,
+  isLoading: false,
+});
+
+function postReducer(
+  state: IPostStateRecord = INITIAL_STATE,
+  action,
+): IPostStateRecord {
+  switch (action.type) {
+    case "FETCHED": {
+      return state.withMutations(currentState =>
+        currentState.set("post", action.payload.post).set("isLoading", false),
+      );
+    }
+    case "UPDATE_TITLE": {
+      return state.setIn(["post", "title"], action.payload.title);
+    }
+    default: {
+      return state;
+    }
+  }
+}
+```
+
+It took some time for us to understand how to scaffold Record interfaces correctly but we managed to create type-safe redux states with both dot notations, and helper methods like `setIn` or `withMuations`.
 
 ### 3rd Iteration: Typescript + Redux + Typescript Readonly Interfaces
+
+As you can see from the code above, we had to build a large set of interfaces, especially when our states were deeply nested. Once we got the pattern down, it wasn't
 
 ### 4th, and the current Iteration: Typescript + Redux + Typescript Readonly Interfaces + Normalizr
