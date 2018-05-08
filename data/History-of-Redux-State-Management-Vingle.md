@@ -1,6 +1,7 @@
 ---
 path: "/blog/History-of-Redux-State-Management-Vingle"
 title: "Part 1: History of Redux State Management at Vingle"
+createdAt: "2018-05-08"
 tags: ["react", "redux", "typescript"]
 ---
 
