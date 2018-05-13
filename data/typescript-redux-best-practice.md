@@ -8,9 +8,8 @@ In this part two, I am going to describe our team's current best practices to ma
 
 * Creating Type-safe Actions and Reducers
 * Typing Redux Container
-* Typing normalizr and denormalizr
 
-### Creating Type-safe Actions and Reducers
+## Creating Type-safe Actions and Reducers
 
 Considering how reducers are just simple functions that accept two arguments, you would expect Typescript to work well with those two. States do. But actions, because `dispatch` accepts any types of arguments, cannot be typed safely without developers' involvement. Before Typescript 2.8, you could achieve type-safety using string enum:
 
@@ -102,7 +101,7 @@ function reducer(
   }
 ```
 
-### Typing Redux Container
+## Typing Redux Container
 
 Before you try to type Redux container components properly, you need to understand the type definition of `connect`. Carefully read the code below I exceprted from Redux type definition (comments are mine, tho). The definition uses a lot of type overloading but I will go through some cases to help you understand what exactly goes on.
 
@@ -146,7 +145,7 @@ export interface Connect {
 }
 ```
 
-#### When you don't pass any argument to connect
+### When you don't pass in any argument to connect
 
 This is when you only need `dispatch` inside your container.
 
@@ -161,7 +160,7 @@ export default connect()(Container);
 
 As there are no arguments to `connect`, all connect will do is to inject `dispatch<any>` into props.
 
-#### When you pass mapStateToProps to connect
+### When you pass in mapStateToProps to connect
 
 If you want to map only state to props, say for render only components, you
 
@@ -191,7 +190,7 @@ const A = connect(mapStateToProps)(Container);
 <A data dispatch={store.dispatch} />; // this isn't valid
 ```
 
-It almost looks like a magic as Redux type definition does a lot of heavy lifting for us. Let's examine what actually happens inside the code above. The following `connect` definition is the overloaded type definition used in this case.
+It almost looks like a magic as Redux type definition does a lot of heavy lifting for us. Let's examine what actually happens inside the code above.
 
 ```typescript
 interface Connect {
@@ -204,10 +203,28 @@ interface Connect {
 }
 ```
 
+This^ `connect` definition is the overloaded type definition used. In the definition, `mapStateToProps` is expanded to
+
 ```typescript
-// The more explicit version will be the following.
+(initialState: State, ownProps: TOwnProps) => (
+  state: State,
+  ownProps: TOwnProps,
+) => TStateProps;
+```
+
+So Typescript will infer `TStateProps`, and `State` to be `{query: string}`, and `AppState` from the argument `mapStateToProps`. `InferableComponentEnhancerWithProps` is expanded to
+
+```typescript
+<P extends (TStateProps & DispatchProp<any> & TOwnProps)>(component: Component<P>): ComponentClass<Omit<P, keyof (TStateProps & DispatchProp<any> & TOwnProps)> & TOwnProps> & {WrappedComponent: Component<P>}
+```
+
+And Typescript will infer `P` to be `Props`, and check whether the container component's `props` is larger than the union of `TStateProps`, `DispatchProp<any>`, and `TOwnProps`.
+
+If I put the logic above into code, it looks like the following:
+
+```typescript
 type TStateProps = ReturnType<typeof mapStateToProps>;
-type TOwnProps = Omit<Props, keyof TStateProps | "dispatch">; // this results in { data: any }. `dispatch` isn't needed if you don't need dispatch in your props.
+type TOwnProps = Omit<Props, keyof TStateProps | keyof DispatchProp<any>>; // this results in { data: any }. But this isn't necessary and you can use {} without a problem.
 
 const B = connect<TStateProps, {}, TOwnProps, AppState>(mapStateToProps)(
   Container,
@@ -217,14 +234,45 @@ const B = connect<TStateProps, {}, TOwnProps, AppState>(mapStateToProps)(
 <B data dispatch={store.dispatch} />; // this isn't valid
 ```
 
-#### When you pass both mapStateToProps and mapDispatchToProps to connect
+### When you pass in both mapStateToProps and mapDispatchToProps to connect
 
-### Extracredit (Typescript tips not related to Redux)
+This isn't hard to understand once you understood how Redux type definition handles `mapStateToProps`. `mapDispatchToProps` is treated like `mapStateToProps`. For your reference, I included the overloaded type below.
 
-#### How to type HOCs that inject props
+```typescript
+interface Connect {
+  <TStateProps = {}, TDispatchProps = {}, TOwnProps = {}, State = {}>(
+    mapStateToProps: MapStateToPropsParam<TStateProps, TOwnProps, State>,
+    mapDispatchToProps: MapDispatchToPropsParam<TDispatchProps, TOwnProps>,
+  ): InferableComponentEnhancerWithProps<
+    TStateProps & TDispatchProps & TOwnProps,
+    TOwnProps
+  >;
+}
+```
 
-#### Use Ambient Types to simplify your dependencies with `typeRoots` option.
+### When you also pass in mergeProps
 
-#### Know your types in React
+This is also rather straightforward. Instead of merging `TStateProps`, `TDispatchProps`, and `TOwnProps` naively for the component definition, `Connect` will now depend on `mergeProps` to merge these props. The only additional check, (or inference) is whether `mergeProps` is of type `(stateProps: TStateProps, dispatchProps: TDispatchProps, ownProps: TOwnProps): TMergedProps;`.
 
-Here is the usual go-to list for us.
+## Extracredit (Typescript tips not related to Redux)
+
+### Know your types in React
+
+Knowing React types helps your code to work with React seamlessly. Here is the usual go-to list for us.
+
+```
+React.Component<P, S>
+React.StatelessComponent<P>
+React.ReactElement = instantiated React Component
+React.ReactNode = React.ReactElement + Renderable primitive types (object is not valid). `children` has this type
+React.CSSProperties
+React.ReactEventHandler
+React.<Input>Event
+```
+
+### How to type HOCs that inject props
+
+### Use Ambient Types to simplify your dependencies
+
+with `typeRoots` and `awesome-typescript-loader`
+This is an easy-to-miss concept when you first start using React.
