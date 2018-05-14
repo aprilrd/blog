@@ -1,17 +1,39 @@
 ---
 path: "/blog/typescript-redux-best-practice"
 title: "Part 2: Typescript+Redux Best Practice at Vingle"
+createdAt: "2018-05-15"
 tags: ["react", "redux", "typescript"]
 ---
+
+_[Part 1: History of Redux State Management at Vingle](/blog/history-of-redux-state-management-vingle)_
 
 In this part two, I am going to describe our team's current best practices to make Typescript work for you when working with Redux.
 
 * Creating Type-safe Actions and Reducers
-* Typing Redux Container
+* Properly typing Redux Container
 
 ## Creating Type-safe Actions and Reducers
 
-Considering how reducers are just simple functions that accept two arguments, you would expect Typescript to work well with those two. States do. But actions, because `dispatch` accepts any types of arguments, cannot be typed safely without developers' involvement. Before Typescript 2.8, you could achieve type-safety using string enum:
+Considering how reducers are just simple functions that accept two arguments, you would expect Typescript to work well with those two. States do. But actions, because `dispatch` accepts any types of arguments, cannot be typed safely without developers' involvement. If you don't type your actions, your reducer will end up in the not-so-ideal state:
+
+```typescript
+function reducer(state = INITIAL_STATE, action: Redux.Action) {
+  switch (action.type) {
+    case ActionTypes.FETCH_USER: {
+      // simple case
+      return {
+        ...state,
+        userId: (action.payload as any).userId,
+      };
+    }
+    default: {
+      return state;
+    }
+  }
+}
+```
+
+You can catch some of type errors with unit tests, but you will miss some properties and lose easy refactoring provided by Typescript. To acheive type-safety before Typescript 2.8, you could use string enum:
 
 ```typescript
 enum ActionTypes {
@@ -56,7 +78,7 @@ function reducer(
   }
 ```
 
-`IOtherAction` is needed so that Typescript won't complain about default case in switch statement (that is, exhaustiveness checking). This works OK if you ignore the fact that there are essentially two duplicate type definitions in your action interfaces, and action creators. Starting with [Typescript 2.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html), you can use `ReturnType` to remove action interfaces.
+`IOtherAction` is needed so that Typescript won't complain about default case in switch statement (that is, exhaustiveness checking). This works OK if you ignore the fact that there are essentially two duplicate type definitions in your action interfaces, and action creators. Starting with [Typescript 2.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html), you can use `ReturnType` to remove action interfaces. The code below is our way to type actions and reducers.
 
 ```typescript
 import { ActionCreatorsMapObject } from "redux";
@@ -101,7 +123,30 @@ function reducer(
   }
 ```
 
-## Typing Redux Container
+## Typing Redux Container components
+
+Typing Redux container components correctly is important to use, and test the components correctly. Before our team learned how to type components, we ended up with tests like this:
+
+```typescript
+const Container = (props: { data: any; dispatch: Dispatch<any> }) => {
+  // render something and do something useful
+  return <div />;
+};
+
+const ConnectedContainer = connect()(Container);
+
+describe("", () => {
+  let wrapper: ReactWrapper;
+  beforeEach(() => {
+    const store = mockStore(state);
+    wrapper = mount(<ConnectedContainer data dispatch={store.dispatch} />);
+  });
+
+  ...
+});
+```
+
+So let's dive in.
 
 Before you try to type Redux container components properly, you need to understand the type definition of `connect`. Carefully read the code below I exceprted from Redux type definition (comments are mine, tho). The definition uses a lot of type overloading but I will go through some cases to help you understand what exactly goes on.
 
@@ -268,11 +313,37 @@ React.ReactNode = React.ReactElement + Renderable primitive types (object is not
 React.CSSProperties
 React.ReactEventHandler
 React.<Input>Event
+React.HTMLProps<ElementType> = Used to extend your component props. Ex) TOwnProps & React.HTMLProps<HTMLDivElment>
 ```
 
 ### How to type HOCs that inject props
 
+The following code is an excerpt from `react-intl`. This type definition is straight-forward to set up, but expects the users of the library to know which props are injected into.
+
+```typescript
+interface InjectedIntlProps {
+  intl: InjectedIntl;
+}
+
+function injectIntl<P>(
+  component: ComponentConstructor<P & InjectedIntlProps>,
+  options?: InjectIntlConfig,
+): React.ComponentClass<P> & {
+  WrappedComponent: ComponentConstructor<P & InjectedIntlProps>;
+};
+
+// actual usage
+interface IProps {
+  flag: boolean;  
+}
+
+class Toast extends React.PureComponent<IProps & InjectedIntlProps> {
+  ...
+}
+
+export default injectIntl<IProps>(Toast);
+```
+
 ### Use Ambient Types to simplify your dependencies
 
-with `typeRoots` and `awesome-typescript-loader`
-This is an easy-to-miss concept when you first start using React.
+This is an easy-to-miss option when you first start using Typescript. You should use `typeRoots` option to avoid adding unnecessary dependencies.

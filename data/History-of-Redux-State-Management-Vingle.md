@@ -1,9 +1,11 @@
 ---
-path: "/blog/History-of-Redux-State-Management-Vingle"
+path: "/blog/history-of-redux-state-management-vingle"
 title: "Part 1: History of Redux State Management at Vingle"
 createdAt: "2018-05-08"
 tags: ["react", "redux", "typescript"]
 ---
+
+_[Part 2: Typescript+Redux Best Practice at Vingle](/blog/typescript-redux-best-practice)_
 
 _This post is a repost of [my post at Vingle Tech Blog](https://medium.com/vingle-tech-blog/part-1-history-of-redux-state-management-at-vingle-565cdcf13df1)._
 
