@@ -347,3 +347,7 @@ export default injectIntl<IProps>(Toast);
 ### Use Ambient Types to simplify your dependencies
 
 This is an easy-to-miss option when you first start using Typescript. You should use `typeRoots` option to avoid adding unnecessary dependencies.
+
+## Afterword
+
+As we develop, and maintain our React apps, we have encountered many bugs. Based on our experience, the harder-to-track, and more critical bugs often stemmed from typeless part of the code. That is why we are determined to type things both comprehensively, and correctly. This isn't the farthest we can go with Typescript, but this is where we are at, and I hope this article has helped you understand Typescript and Redux more deeply.
