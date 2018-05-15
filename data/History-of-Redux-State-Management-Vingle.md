@@ -128,8 +128,8 @@ interface IPostStateRecordPart {
 }
 
 interface IPostStateRecord
-  extends TypedRecord<IPostStateRecordPart>,
-    IPostStateRecord {}
+  extends TypedRecord<IPostStateRecord>,
+    IPostStateRecordPart {}
 
 function recordifyPostState(plainState: IPostState): IPostStateRecord {
   return recordify<IPostStateRecordPart, IPostStateRecord>({
