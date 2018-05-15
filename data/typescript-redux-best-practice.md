@@ -299,6 +299,10 @@ interface Connect {
 
 This is also rather straightforward. Instead of merging `TStateProps`, `TDispatchProps`, and `TOwnProps` naively for the component definition, `Connect` will now depend on `mergeProps` to merge these props. The only additional check, (or inference) is whether `mergeProps` is of type `(stateProps: TStateProps, dispatchProps: TDispatchProps, ownProps: TOwnProps): TMergedProps;`.
 
+### What this means
+
+First of all, congratulations on getting through all these different types! Now you get how `Connect` works. But, it turns out you don't need to type things directly when you use Redux's `Connect`. However, other HOC's definitions will vary, and you will need to learn how their type systems work.
+
 ## Extracredit (Typescript tips not related to Redux)
 
 ### Know your types in React
