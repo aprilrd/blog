@@ -139,7 +139,7 @@ describe("", () => {
   let wrapper: ReactWrapper;
   beforeEach(() => {
     const store = mockStore(state);
-    wrapper = mount(<ConnectedContainer data dispatch={store.dispatch} />);
+    wrapper = mount(<ConnectedContainer data dispatch={store.dispatch} />, { store });
   });
 
   ...
@@ -148,9 +148,9 @@ describe("", () => {
 
 So let's dive in.
 
-Before you try to type Redux container components properly, you need to understand the type definition of `connect`. Carefully read the code below I exceprted from Redux type definition (comments are mine, tho). The definition uses a lot of type overloading but I will go through some cases to help you understand what exactly goes on.
+Before you try to type Redux container components properly, you need to understand the type definition of `connect`. Carefully read the code below I quoted from Redux type definition (comments are mine). The definition uses a lot of type overloading but I will go through some cases to help you understand what exactly goes on.
 
-_Please note that the definition below is from `@types/redux@3.6.31`._
+_Please note that the definitions below are from `@types/react-redux@5.0.19`._
 
 ```typescript
 export interface DispatchProp<S> {
