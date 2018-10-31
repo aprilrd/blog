@@ -59,7 +59,6 @@ const getSchemaOrgJSONLD = ({
           publisher: {
             "@type": "Organization",
             url: config.url,
-            logo: config.logo,
             name: config.authorName,
           },
           mainEntityOfPage: {
@@ -111,8 +110,8 @@ const SEO = ({ postData, isBlogPost }) => {
       {isBlogPost ? <meta property="og:type" content="article" /> : null}
       <meta property="og:title" content={title} />
       {/* <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} /> */}
-      <meta property="fb:app_id" content={config.fbAppID} />
+      <meta property="og:image" content={image} /> 
+      <meta property="fb:app_id" content={config.fbAppID} />*/}
 
       {/* Twitter Card tags */}
       <meta name="twitter:card" content="summary_large_image" />
